@@ -1,0 +1,50 @@
+{
+  "name": "canvasbar-react",
+  "version": "0.0.1",
+  "description": "React component for CanvasBar",
+  "files": [
+    "build",
+    "README.md"
+  ],
+  "author": "Andrii Prashcharuk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monext/canvasbar.git",
+    "directory": "packages/canvasbar-react"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "module": "build/index.es.js",
+  "bugs": "https://github.com/grsmto/simplebar/issues",
+  "homepage": "https://github.com/monext/canvasbar",
+  "license": "GNU",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "test": "jest",
+    "precommit": "lint-staged"
+  },
+  "peerDependencies": {
+    "@types/react": ">=16.8.0",
+    "@types/react-dom": ">=16.8.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "21.0.1",
+    "@rollup/plugin-node-resolve": "13.0.6",
+    "@rollup/plugin-typescript": "8.3.0",
+    "@testing-library/jest-dom": "5.16.0",
+    "@testing-library/react": "12.1.2",
+    "rollup": "2.61.1",
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-postcss": "4.0.2",
+    "rollup-plugin-typescript2": "0.31.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,json}": [
+      "prettier-eslint --write",
+      "git add"
+    ]
+  }
+}
