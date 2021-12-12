@@ -2,6 +2,8 @@ import { HTMLAttributes, createElement } from 'react';
 
 import { useCanvasBar } from '../hooks/useCanvasBar';
 
+import './CanvasBar.scss';
+
 interface Props<Element> extends HTMLAttributes<Element> {
     as?: string;
     config?: Object
