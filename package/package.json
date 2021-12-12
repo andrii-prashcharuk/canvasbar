@@ -1,6 +1,6 @@
 {
   "name": "canvasbar-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "React component for CanvasBar",
   "files": [
     "build",
@@ -16,7 +16,7 @@
   "types": "build/index.d.ts",
   "module": "build/index.es.js",
   "bugs": "https://github.com/grsmto/simplebar/issues",
-  "homepage": "https://github.com/monext/canvasbar",
+  "homepage": "https://pj2m4.csb.app",
   "license": "GNU",
   "scripts": {
     "build": "rollup -c",
