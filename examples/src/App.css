@@ -13,3 +13,8 @@
   margin: auto;
   overflow: auto;
 }
+
+.my-scrollable-container img {
+  width: 600px;
+  height: 600px;
+}

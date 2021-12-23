@@ -5,6 +5,7 @@ import './App.css';
 
 const TEXT = loremIpsum({ count: 100 });
 const TEXT_SMALL = loremIpsum({ count: 7 });
+const IMAGES_IDS = Array.from(Array(10).keys());
 
 function App() {
   return (
@@ -14,6 +15,12 @@ function App() {
                 <h3>Container with both scrollbars</h3>
                 <p>{TEXT}</p>
             </div>
+        </CanvasBar>
+        <CanvasBar className="my-scrollable-container">
+            <h3>Container with 10 large images (3000x3000 resized to 600x600) and both scrollbars</h3>
+            {IMAGES_IDS.map(id => (
+                <img key={id} src={`https://picsum.photos/id/${id}/3000/3000`} alt="test" />
+            ))}
         </CanvasBar>
         <CanvasBar className="my-scrollable-container">
             <h3>Container with vertical scrollbar only</h3>
