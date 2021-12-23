@@ -75,7 +75,11 @@ function initScrollBar({ element, type, scrollSize, scrollValue, containerSize }
             scrollState.offset = newTop;
 
             render();
+
+            return true;
         }
+
+        return false;
     }
 
     return { render, updateScrollValue };
@@ -90,11 +94,26 @@ export function startScrollBars(container: HTMLDivElement, scrollbarX: HTMLCanva
         return;
     }
 
-    function handleOnScroll(event: Event) {
-        const { scrollTop, scrollLeft } = container;
+    let isUpdatingScroll = false;
 
-        scrollXInstance?.updateScrollValue(scrollLeft);
-        scrollYInstance?.updateScrollValue(scrollTop);
+    function renderScrollBars() {
+        const { scrollTop, scrollLeft } = container;
+        const isUpdatedX = !!scrollXInstance?.updateScrollValue(scrollLeft);
+        const isUpdatedY = !!scrollYInstance?.updateScrollValue(scrollTop);
+
+        isUpdatingScroll = isUpdatedX || isUpdatedY;
+
+        if (isUpdatingScroll) {
+            requestAnimationFrame(renderScrollBars);
+        }
+    }
+
+    function handleOnScroll() {
+        if (isUpdatingScroll) {
+            return;
+        }
+
+        requestAnimationFrame(renderScrollBars);
     }
 
     container.addEventListener('scroll', handleOnScroll);
