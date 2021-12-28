@@ -1,5 +1,5 @@
 import { loremIpsum } from 'lorem-ipsum';
-import { CanvasBar } from  'canvasbar-react';
+import { CanvasBar, useBodyCanvasBar } from  'canvasbar-react';
 
 import './App.css';
 
@@ -8,6 +8,8 @@ const TEXT_SMALL = loremIpsum({ count: 7 });
 const IMAGES_IDS = Array.from(Array(10).keys());
 
 function App() {
+  useBodyCanvasBar();
+
   return (
     <div className="app">
         <CanvasBar className="my-scrollable-container">
