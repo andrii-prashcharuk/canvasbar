@@ -15,6 +15,11 @@
   }
 }
 
+/* Firefox */
+:root.canvasbar-hide-global-scrollbars {
+  scrollbar-width: none;
+}
+
 .canvasbar-scrollbar-x,
 .canvasbar-scrollbar-y {
   display: none;
@@ -52,4 +57,9 @@
 
 .canvasbar-with-x-scrollbar.canvasbar-with-y-scrollbar .canvasbar-scrollbar-y {
   height: calc(100% - 10px);
+}
+
+body.canvasbar-scrollable > .canvasbar-scrollbar-x,
+body.canvasbar-scrollable > .canvasbar-scrollbar-y {
+  position: fixed;
 }

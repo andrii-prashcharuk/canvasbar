@@ -3,19 +3,19 @@ const { devicePixelRatio } = window;
 type ScrollType = 'x' | 'y';
 
 interface ScrollState {
-    elementWidth: number;
-    elementHeight: number;
-    canvasWidth: number;
-    canvasHeight: number;
-    scrollSize: number;
-    scrollBarSize: number;
-    offset: number;
+  elementWidth: number;
+  elementHeight: number;
+  canvasWidth: number;
+  canvasHeight: number;
+  scrollSize: number;
+  scrollBarSize: number;
+  offset: number;
 }
 
 const MIN_SIZE = 20;
 
 function getBoundingClientRectFromElement(element: HTMLCanvasElement | null) {
-    return element?.getBoundingClientRect() ?? { width: 0, height: 0 };
+  return element?.getBoundingClientRect() ?? { width: 0, height: 0 };
 }
 
 interface InitScrollBarProps {
@@ -26,104 +26,139 @@ interface InitScrollBarProps {
     containerSize: number;
 }
 
-function initScrollBar({ element, type, scrollSize, scrollValue, containerSize }: InitScrollBarProps) {
-    const { width: elementWidth, height: elementHeight } = getBoundingClientRectFromElement(element);
-    const ctx = element?.getContext('2d');
+function initScrollBar({
+  element, type, scrollSize, scrollValue, containerSize,
+}: InitScrollBarProps) {
+  const { width: elementWidth, height: elementHeight } = getBoundingClientRectFromElement(element);
+  const ctx = element?.getContext('2d');
 
-    if (!element || !ctx || !elementWidth || !elementHeight || !scrollSize || scrollSize === containerSize) {
-        return;
+  if (!element || !ctx || !elementWidth || !elementHeight || !scrollSize || scrollSize === containerSize) {
+    return;
+  }
+
+  const canvasWidth = elementWidth * devicePixelRatio;
+  const canvasHeight = elementHeight * devicePixelRatio;
+  const scrollBarSize = Math.floor(
+    Math.max(MIN_SIZE, containerSize * (containerSize / scrollSize)),
+  ) * devicePixelRatio;
+  const initialProgress = scrollValue / (scrollSize - containerSize);
+  const offset = initialProgress * ((type === 'x' ? canvasWidth : canvasHeight) - scrollBarSize);
+
+  const scrollState: ScrollState = {
+    elementWidth,
+    elementHeight,
+    canvasWidth,
+    canvasHeight,
+    scrollSize,
+    scrollBarSize,
+    offset,
+  };
+
+  // eslint-disable-next-line no-param-reassign
+  element.width = scrollState.canvasWidth;
+  // eslint-disable-next-line no-param-reassign
+  element.height = scrollState.canvasHeight;
+
+  function render() {
+    if (!ctx) {
+      return;
     }
 
-    const canvasWidth = elementWidth * devicePixelRatio;
-    const canvasHeight = elementHeight * devicePixelRatio;
-    const scrollBarSize = Math.floor(Math.max(MIN_SIZE, containerSize * (containerSize / scrollSize))) * devicePixelRatio;
-    const progress = scrollValue / (scrollSize - containerSize);
-    const offset = progress * ((type === 'x' ? canvasWidth : canvasHeight) - scrollBarSize);
+    ctx.clearRect(0, 0, scrollState.canvasWidth, scrollState.canvasHeight);
 
-    const scrollState: ScrollState = {
-        elementWidth,
-        elementHeight,
-        canvasWidth,
-        canvasHeight,
-        scrollSize,
-        scrollBarSize,
-        offset,
-    };
+    if (type === 'x') {
+      ctx.fillRect(scrollState.offset, 0, scrollState.scrollBarSize, scrollState.canvasHeight);
+    } else {
+      ctx.fillRect(0, scrollState.offset, scrollState.canvasWidth, scrollState.scrollBarSize);
+    }
+  }
 
-    element.width = scrollState.canvasWidth;
-    element.height = scrollState.canvasHeight;
+  function updateScrollValue(value: number) {
+    const progress = value / (scrollSize - containerSize);
+    const newTop = progress * ((type === 'x' ? canvasWidth : canvasHeight) - scrollBarSize);
 
-    function render() {
-        if (!ctx) {
-            return;
-        }
+    if (newTop !== scrollState.offset) {
+      scrollState.offset = newTop;
 
-        ctx.clearRect(0, 0, scrollState.canvasWidth, scrollState.canvasHeight);
+      render();
 
-        if (type === 'x') {
-            ctx.fillRect(scrollState.offset, 0, scrollState.scrollBarSize, scrollState.canvasHeight);
-        } else {
-            ctx.fillRect(0, scrollState.offset, scrollState.canvasWidth, scrollState.scrollBarSize);
-        }
+      return true;
     }
 
-    function updateScrollValue(value: number) {
-        const progress = value / (scrollSize - containerSize);
-        const newTop = progress * ((type === 'x' ? canvasWidth : canvasHeight) - scrollBarSize);
+    return false;
+  }
 
-        if (newTop !== scrollState.offset) {
-            scrollState.offset = newTop;
-
-            render();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    return { render, updateScrollValue };
+  return { render, updateScrollValue };
 }
 
-export function startScrollBars(container: HTMLDivElement, scrollbarX: HTMLCanvasElement | null, scrollbarY: HTMLCanvasElement | null) {
-    const { scrollHeight, scrollWidth, scrollTop, scrollLeft, clientHeight, clientWidth } = container;
-    const scrollXInstance = initScrollBar({ type: 'x', element: scrollbarX, containerSize: clientWidth, scrollSize: scrollWidth, scrollValue: scrollLeft })
-    const scrollYInstance = initScrollBar({ type: 'y', element: scrollbarY, containerSize: clientHeight, scrollSize: scrollHeight, scrollValue: scrollTop })
+export function startScrollBars(
+  container: HTMLElement,
+  scrollbarX: HTMLCanvasElement | null,
+  scrollbarY: HTMLCanvasElement | null,
+) {
+  const {
+    scrollHeight,
+    scrollWidth,
+    scrollTop: scrollValueY,
+    scrollLeft: scrollValueX,
+    tagName,
+    clientHeight,
+    clientWidth,
+  } = container;
+  const isHTML = tagName === 'HTML';
+  const scrollXInstance = initScrollBar({
+    type: 'x', element: scrollbarX, containerSize: clientWidth, scrollSize: scrollWidth, scrollValue: scrollValueX,
+  });
+  const scrollYInstance = initScrollBar({
+    type: 'y',
+    element: scrollbarY,
+    containerSize: clientHeight,
+    scrollSize: scrollHeight,
+    scrollValue: scrollValueY,
+  });
 
-    if (!scrollXInstance && !scrollYInstance) {
-        return;
+  if (!scrollXInstance && !scrollYInstance) {
+    return;
+  }
+
+  let isUpdatingScroll = false;
+
+  function renderScrollBars() {
+    if (!isUpdatingScroll) {
+      return;
     }
 
-    let isUpdatingScroll = false;
+    const { scrollTop, scrollLeft } = container;
+    const isUpdatedX = !!scrollXInstance?.updateScrollValue(scrollLeft);
+    const isUpdatedY = !!scrollYInstance?.updateScrollValue(scrollTop);
 
-    function renderScrollBars() {
-        const { scrollTop, scrollLeft } = container;
-        const isUpdatedX = !!scrollXInstance?.updateScrollValue(scrollLeft);
-        const isUpdatedY = !!scrollYInstance?.updateScrollValue(scrollTop);
+    isUpdatingScroll = isUpdatedX || isUpdatedY || true;
 
-        isUpdatingScroll = isUpdatedX || isUpdatedY;
+    if (isUpdatingScroll) {
+      requestAnimationFrame(renderScrollBars);
+    }
+  }
 
-        if (isUpdatingScroll) {
-            requestAnimationFrame(renderScrollBars);
-        }
+  function handleOnScroll() {
+    if (isUpdatingScroll) {
+      return;
     }
 
-    function handleOnScroll() {
-        if (isUpdatingScroll) {
-            return;
-        }
+    isUpdatingScroll = true;
+    requestAnimationFrame(renderScrollBars);
+  }
 
-        requestAnimationFrame(renderScrollBars);
-    }
+  const scrollElement = isHTML ? window : container;
 
-    container.addEventListener('scroll', handleOnScroll);
+  scrollElement.addEventListener('scroll', handleOnScroll);
 
-    scrollXInstance?.render();
-    scrollYInstance?.render();
+  scrollXInstance?.render();
+  scrollYInstance?.render();
 
-    function stop() {
-        container.removeEventListener('scroll', handleOnScroll);
-    }
+  function stop() {
+    scrollElement.removeEventListener('scroll', handleOnScroll);
+    isUpdatingScroll = false;
+  }
 
-    return { stop, isVisibleX: !!scrollXInstance, isVisibleY: !!scrollYInstance };
+  return { stop, isVisibleX: !!scrollXInstance, isVisibleY: !!scrollYInstance };
 }

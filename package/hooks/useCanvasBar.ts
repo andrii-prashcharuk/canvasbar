@@ -1,38 +1,43 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  RefObject, useEffect, useState,
+} from 'react';
 
 import { startScrollBars } from '../tools/scrollbar.tools';
 
-export function useCanvasBar() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [isVisibleX, setIsVisibleX] = useState(true);
-    const [isVisibleY, setIsVisibleY] = useState(true);
-    const scrollbarXRef = useRef<HTMLCanvasElement>(null);
-    const scrollbarYRef = useRef<HTMLCanvasElement>(null);
+import '../styles.scss';
 
-    useEffect(() => {
-        const container = containerRef.current;
-        const scrollbarX = scrollbarXRef.current;
-        const scrollbarY = scrollbarYRef.current;
+export function useCanvasBar(
+  containerRef: RefObject<HTMLElement>,
+  scrollbarXRef: RefObject<HTMLCanvasElement>,
+  scrollbarYRef: RefObject<HTMLCanvasElement>,
+) {
+  const [isVisibleX, setIsVisibleX] = useState(true);
+  const [isVisibleY, setIsVisibleY] = useState(true);
 
-        if (!container || (!scrollbarX && !scrollbarX)) {
-            setIsVisibleX(false);
-            setIsVisibleY(false);
-            return;
-        }
+  useEffect(() => {
+    const container = containerRef.current;
+    const scrollbarX = scrollbarXRef.current;
+    const scrollbarY = scrollbarYRef.current;
 
-        const instance = startScrollBars(container, scrollbarX, scrollbarY);
+    if (!container || (!scrollbarX && !scrollbarY)) {
+      setIsVisibleX(false);
+      setIsVisibleY(false);
+      return;
+    }
 
-        setIsVisibleX(!!instance?.isVisibleX);
-        setIsVisibleY(!!instance?.isVisibleY);
+    const instance = startScrollBars(container, scrollbarX, scrollbarY);
 
-        return () => instance?.stop();
-    }, [containerRef]);
+    setIsVisibleX(!!instance?.isVisibleX);
+    setIsVisibleY(!!instance?.isVisibleY);
 
-    return {
-        containerRef,
-        scrollbarXRef,
-        scrollbarYRef,
-        isVisibleX,
-        isVisibleY,
-    };
+    return () => instance?.stop();
+  }, [containerRef, scrollbarXRef, scrollbarYRef]);
+
+  return {
+    containerRef,
+    scrollbarXRef,
+    scrollbarYRef,
+    isVisibleX,
+    isVisibleY,
+  };
 }

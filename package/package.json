@@ -1,6 +1,6 @@
 {
   "name": "canvasbar-react",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React component for CanvasBar",
   "files": [
     "build",
@@ -19,9 +19,11 @@
   "homepage": "https://pj2m4.csb.app",
   "license": "GNU",
   "scripts": {
-    "build": "rollup -c",
+    "eslint": "eslint --ext .ts,.tsx ./",
+    "build": "npm run eslint && rollup -c",
+    "updateExamplePackage": "rm -rf ../examples/node_modules/canvasbar-react/build && cp -R build ../examples/node_modules/canvasbar-react/build",
+    "build:dev": "npm run build && npm run updateExamplePackage",
     "prepublishOnly": "npm run build",
-    "test": "jest",
     "precommit": "lint-staged"
   },
   "peerDependencies": {
@@ -36,7 +38,17 @@
     "@rollup/plugin-typescript": "8.3.0",
     "@testing-library/jest-dom": "5.16.0",
     "@testing-library/react": "12.1.2",
+    "@typescript-eslint/eslint-plugin": "5.8.1",
+    "@typescript-eslint/parser": "5.8.1",
+    "eslint": "8.5.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-import-resolver-typescript": "2.5.0",
+    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-jsx-a11y": "6.5.1",
+    "eslint-plugin-react": "7.28.0",
+    "eslint-plugin-react-hooks": "4.3.0",
     "node-sass": "7.0.0",
+    "prettier": "2.5.1",
     "rollup": "2.61.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-postcss": "4.0.2",
