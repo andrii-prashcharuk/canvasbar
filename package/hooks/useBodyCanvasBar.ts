@@ -37,12 +37,12 @@ export function useBodyCanvasBar() {
     ].filter(Boolean);
 
     document.body.classList.add(...classes);
-    document.documentElement.classList.add('canvasbar-hide-global-scrollbars');
+    document.documentElement.classList.add('canvasbar-hide-root-scrollbars');
 
     return () => {
       document.body.classList.remove(...classes);
       document.documentElement.classList.remove(
-        'canvasbar-hide-global-scrollbars',
+        'canvasbar-hide-root-scrollbars',
       );
     };
   }, [isVisibleX, isVisibleY]);
