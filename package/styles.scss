@@ -5,7 +5,6 @@
 
 .canvasbar-scrollable,
 .canvasbar-hide-root-scrollbars {
-  overflow: auto;
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
   scrollbar-width: none;  /* Firefox */
 
@@ -14,9 +13,14 @@
   }
 }
 
+.canvasbar-hide-root-scrollbars {
+  overflow: auto;
+}
+
 .canvasbar-scrollable:not(body) {
   width: 100%;
   height: 100%;
+  overflow: auto;
 }
 
 .canvasbar-scrollbar-x,
