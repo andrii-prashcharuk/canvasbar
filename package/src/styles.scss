@@ -1,3 +1,7 @@
+:root {
+  --canvasbar-size: 11px;
+}
+
 .canvasbar-wrapper {
   position: relative;
   overflow: auto;
@@ -37,13 +41,13 @@
 
 .canvasbar-scrollbar-x {
   width: 100%;
-  height: 10px;
+  height: var(--canvasbar-size);
   bottom: 0;
   left: 0;
 }
 
 .canvasbar-scrollbar-y {
-  width: 10px;
+  width: var(--canvasbar-size);
   height: 100%;
   top: 0;
   right: 0;
@@ -55,11 +59,11 @@
 }
 
 .canvasbar-with-x-scrollbar.canvasbar-with-y-scrollbar > .canvasbar-scrollbar-x {
-  width: calc(100% - 10px);
+  width: calc(100% - var(--canvasbar-size));
 }
 
 .canvasbar-with-x-scrollbar.canvasbar-with-y-scrollbar > .canvasbar-scrollbar-y {
-  height: calc(100% - 10px);
+  height: calc(100% - var(--canvasbar-size));
 }
 
 body {

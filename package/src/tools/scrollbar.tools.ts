@@ -1,22 +1,8 @@
+import { DEFAULT_CONFIG } from '../config';
+import { ScrollState, ScrollType } from '../types';
+import { clearCanvas, getElementDimension, renderThumb } from './canvas.tools';
+
 const { devicePixelRatio } = window;
-
-type ScrollType = 'x' | 'y';
-
-interface ScrollState {
-  elementWidth: number;
-  elementHeight: number;
-  canvasWidth: number;
-  canvasHeight: number;
-  scrollSize: number;
-  scrollBarSize: number;
-  offset: number;
-}
-
-const MIN_SIZE = 20;
-
-function getBoundingClientRectFromElement(element: HTMLCanvasElement | null) {
-  return element?.getBoundingClientRect() ?? { width: 0, height: 0 };
-}
 
 interface InitScrollBarProps {
     element: HTMLCanvasElement | null,
@@ -29,7 +15,7 @@ interface InitScrollBarProps {
 function initScrollBar({
   element, type, scrollSize, scrollValue, containerSize,
 }: InitScrollBarProps) {
-  const { width: elementWidth, height: elementHeight } = getBoundingClientRectFromElement(element);
+  const { width: elementWidth, height: elementHeight } = getElementDimension(element);
   const ctx = element?.getContext('2d');
 
   if (!element || !ctx || !elementWidth || !elementHeight || !scrollSize || scrollSize === containerSize) {
@@ -39,7 +25,7 @@ function initScrollBar({
   const canvasWidth = elementWidth * devicePixelRatio;
   const canvasHeight = elementHeight * devicePixelRatio;
   const scrollBarSize = Math.floor(
-    Math.max(MIN_SIZE, containerSize * (containerSize / scrollSize)),
+    Math.max(DEFAULT_CONFIG.thumbMinSize, containerSize * (containerSize / scrollSize)),
   ) * devicePixelRatio;
   const initialProgress = scrollValue / (scrollSize - containerSize);
   const offset = initialProgress * ((type === 'x' ? canvasWidth : canvasHeight) - scrollBarSize);
@@ -52,11 +38,10 @@ function initScrollBar({
     scrollSize,
     scrollBarSize,
     offset,
+    type,
   };
 
-  // eslint-disable-next-line no-param-reassign
   element.width = scrollState.canvasWidth;
-  // eslint-disable-next-line no-param-reassign
   element.height = scrollState.canvasHeight;
 
   function render() {
@@ -64,13 +49,8 @@ function initScrollBar({
       return;
     }
 
-    ctx.clearRect(0, 0, scrollState.canvasWidth, scrollState.canvasHeight);
-
-    if (type === 'x') {
-      ctx.fillRect(scrollState.offset, 0, scrollState.scrollBarSize, scrollState.canvasHeight);
-    } else {
-      ctx.fillRect(0, scrollState.offset, scrollState.canvasWidth, scrollState.scrollBarSize);
-    }
+    clearCanvas(ctx, scrollState);
+    renderThumb(ctx, scrollState, DEFAULT_CONFIG);
   }
 
   function updateScrollValue(value: number) {
