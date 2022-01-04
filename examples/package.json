@@ -10,7 +10,7 @@
     "@types/node": "16.11.11",
     "@types/react": "17.0.37",
     "@types/react-dom": "17.0.11",
-    "canvasbar-react": "0.0.7",
+    "canvasbar-react": "0.0.8",
     "lorem-ipsum": "2.0.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
