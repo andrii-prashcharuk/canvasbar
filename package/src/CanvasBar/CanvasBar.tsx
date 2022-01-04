@@ -14,21 +14,14 @@ export function CanvasBar<Element extends HTMLElement = HTMLElement>({
   const containerRef = useRef<HTMLElement>(null);
   const scrollbarXRef = useRef<HTMLCanvasElement>(null);
   const scrollbarYRef = useRef<HTMLCanvasElement>(null);
-  const {
-    isVisibleX, isVisibleY,
-  } = useCanvasBar(containerRef, scrollbarXRef, scrollbarYRef);
-  const classes = [
-    'canvasbar-wrapper',
-    className,
-    isVisibleX && 'canvasbar-with-x-scrollbar',
-    isVisibleY && 'canvasbar-with-y-scrollbar',
-  ].filter(Boolean).join(' ');
+
+  useCanvasBar(containerRef, scrollbarXRef, scrollbarYRef);
 
   return createElement(
     as,
     {
       ...props,
-      className: classes,
+      className: `canvasbar-wrapper ${className}`,
     }, (
       <>
         <div ref={containerRef as RefObject<HTMLDivElement>} className="canvasbar-scrollable">{children}</div>

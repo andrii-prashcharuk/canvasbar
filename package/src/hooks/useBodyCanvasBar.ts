@@ -1,6 +1,4 @@
-import {
-  useLayoutEffect, useRef,
-} from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 import { useCanvasBar } from './useCanvasBar';
 
@@ -27,23 +25,17 @@ export function useBodyCanvasBar() {
     };
   }, [containerRef, scrollbarXRef, scrollbarYRef]);
 
-  const { isVisibleX, isVisibleY } = useCanvasBar(containerRef, scrollbarXRef, scrollbarYRef);
+  useCanvasBar(containerRef, scrollbarXRef, scrollbarYRef);
 
   useLayoutEffect(() => {
-    const classes = [
-      'canvasbar-scrollable',
-      isVisibleX && 'canvasbar-with-x-scrollbar',
-      isVisibleY && 'canvasbar-with-y-scrollbar',
-    ].filter(Boolean);
-
-    document.body.classList.add(...classes);
+    document.body.classList.add('canvasbar-scrollable');
     document.documentElement.classList.add('canvasbar-hide-root-scrollbars');
 
     return () => {
-      document.body.classList.remove(...classes);
+      document.body.classList.remove('canvasbar-scrollable');
       document.documentElement.classList.remove(
         'canvasbar-hide-root-scrollbars',
       );
     };
-  }, [isVisibleX, isVisibleY]);
+  }, []);
 }

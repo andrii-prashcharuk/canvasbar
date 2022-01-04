@@ -29,10 +29,10 @@
 
 .canvasbar-scrollbar-x,
 .canvasbar-scrollbar-y {
-  display: none;
   background: rgba(255, 255, 255, 0);
   position: absolute;
   transition: background-color 200ms;
+  visibility: hidden;
 
   &:hover {
     background: rgba(255, 255, 255, .9);
@@ -55,7 +55,7 @@
 
 .canvasbar-with-x-scrollbar > .canvasbar-scrollbar-x,
 .canvasbar-with-y-scrollbar > .canvasbar-scrollbar-y {
-  display: block;
+  visibility: visible;
 }
 
 .canvasbar-with-x-scrollbar.canvasbar-with-y-scrollbar > .canvasbar-scrollbar-x {
