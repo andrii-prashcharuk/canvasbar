@@ -1,8 +1,9 @@
 import { useLayoutEffect, useRef } from 'react';
 
+import { Config } from '../types';
 import { useCanvasBar } from './useCanvasBar';
 
-export function useBodyCanvasBar() {
+export function useBodyCanvasBar(config?: Partial<Config>) {
   const containerRef = useRef<HTMLElement>(null);
   const scrollbarXRef = useRef<HTMLCanvasElement>(null);
   const scrollbarYRef = useRef<HTMLCanvasElement>(null);
@@ -25,7 +26,7 @@ export function useBodyCanvasBar() {
     };
   }, [containerRef, scrollbarXRef, scrollbarYRef]);
 
-  useCanvasBar(containerRef, scrollbarXRef, scrollbarYRef);
+  useCanvasBar(containerRef, scrollbarXRef, scrollbarYRef, config);
 
   useLayoutEffect(() => {
     document.body.classList.add('canvasbar-scrollable');

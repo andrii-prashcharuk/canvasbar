@@ -1,19 +1,20 @@
 import { DEFAULT_CONFIG } from '../config';
-import { ScrollState, ScrollType } from '../types';
+import { Config, ScrollState, ScrollType } from '../types';
 import { clearCanvas, getElementDimension, renderThumb } from './canvas.tools';
 
 const { devicePixelRatio } = window;
 
 interface InitScrollBarProps {
-    element: HTMLCanvasElement | null,
-    type: ScrollType,
-    scrollSize: number;
-    scrollValue: number;
-    containerSize: number;
+  element: HTMLCanvasElement | null,
+  type: ScrollType,
+  scrollSize: number;
+  scrollValue: number;
+  containerSize: number;
+  config: Config;
 }
 
 function initState({
-  element, type, scrollSize, scrollValue, containerSize,
+  element, type, scrollSize, scrollValue, containerSize, config,
 }: InitScrollBarProps): ScrollState | undefined {
   const { width: elementWidth, height: elementHeight } = getElementDimension(element);
 
@@ -24,7 +25,7 @@ function initState({
   const canvasWidth = elementWidth * devicePixelRatio;
   const canvasHeight = elementHeight * devicePixelRatio;
   const scrollBarSize = Math.floor(
-    Math.max(DEFAULT_CONFIG.thumbMinSize, containerSize * (containerSize / scrollSize)),
+    Math.max(config.thumbMinSize, containerSize * (containerSize / scrollSize)),
   ) * devicePixelRatio;
   const initialProgress = scrollValue / (scrollSize - containerSize);
   const offset = initialProgress * ((type === 'x' ? canvasWidth : canvasHeight) - scrollBarSize);
@@ -55,7 +56,7 @@ function initScrollBar(props: InitScrollBarProps) {
     }
 
     clearCanvas(ctx, scrollState);
-    renderThumb(ctx, scrollState, DEFAULT_CONFIG);
+    renderThumb(ctx, scrollState, props.config);
   }
 
   function updateScrollValue(value: number) {
@@ -110,7 +111,9 @@ export function startScrollBars(
   container: HTMLElement,
   scrollbarX: HTMLCanvasElement | null,
   scrollbarY: HTMLCanvasElement | null,
+  propsConfig?: Partial<Config>,
 ) {
+  const config = { ...DEFAULT_CONFIG, ...propsConfig };
   const {
     scrollHeight: scrollSizeY,
     scrollWidth: scrollSizeX,
@@ -122,7 +125,12 @@ export function startScrollBars(
   } = container;
   const isHTML = tagName === 'HTML';
   const scrollXInstance = initScrollBar({
-    type: 'x', element: scrollbarX, containerSize: containerWidth, scrollSize: scrollSizeX, scrollValue: scrollValueX,
+    type: 'x',
+    element: scrollbarX,
+    containerSize: containerWidth,
+    scrollSize: scrollSizeX,
+    scrollValue: scrollValueX,
+    config,
   });
   const scrollYInstance = initScrollBar({
     type: 'y',
@@ -130,6 +138,7 @@ export function startScrollBars(
     containerSize: containerHeight,
     scrollSize: scrollSizeY,
     scrollValue: scrollValueY,
+    config,
   });
 
   let isUpdatingScroll = false;
