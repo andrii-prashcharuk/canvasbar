@@ -17,4 +17,5 @@ export interface ScrollState {
   offset: number;
   type: ScrollType;
   containerSize: number;
+  scrollValue: number;
 }

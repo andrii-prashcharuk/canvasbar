@@ -6,6 +6,6 @@ Custom scrollbars implemented using canvas api
 Features that will be added/done soon:
 - [x] Re-rendering after resize
 - [x] Customization via config prop or context
-- [ ] Draggable thumb
-- [ ] Documentation
+- [x] Draggable thumb
+- [ ] Documentation (in progress, for now see the `examples` folder)
 - [ ] Release

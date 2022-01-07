@@ -70,3 +70,11 @@ export function renderThumb(ctx: CanvasRenderingContext2D, {
     );
   }
 }
+
+export function isClickedOnThumb(x: number, y: number, {
+  type, offset, scrollBarSize,
+}: ScrollState) {
+  const coordinate = type === 'x' ? x : y;
+
+  return coordinate >= offset && coordinate <= offset + scrollBarSize;
+}

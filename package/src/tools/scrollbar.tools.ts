@@ -1,6 +1,8 @@
 import { DEFAULT_CONFIG } from '../config';
 import { Config, ScrollState, ScrollType } from '../types';
-import { clearCanvas, getElementDimension, renderThumb } from './canvas.tools';
+import {
+  clearCanvas, getElementDimension, isClickedOnThumb, renderThumb,
+} from './canvas.tools';
 
 const { devicePixelRatio } = window;
 
@@ -11,6 +13,7 @@ interface InitScrollBarProps {
   scrollValue: number;
   containerSize: number;
   config: Config;
+  onScrollValueChange: (value: number) => void;
 }
 
 function initState({
@@ -43,12 +46,75 @@ function initState({
     scrollBarSize,
     offset,
     type,
+    scrollValue,
   };
 }
 
 function initScrollBar(props: InitScrollBarProps) {
   const ctx = props.element?.getContext('2d');
   let scrollState = initState(props);
+  let lastMousePosition: number | null = null;
+  let isWaitingForScrollValueUpdate = false;
+
+  function handleOnMouseDown(event: MouseEvent) {
+    const {
+      offsetX, offsetY, screenX, screenY,
+    } = event;
+
+    event.preventDefault();
+
+    if (isClickedOnThumb(offsetX * devicePixelRatio, offsetY * devicePixelRatio, scrollState)) {
+      lastMousePosition = props.type === 'x' ? screenX : screenY;
+    } else {
+      const currentPosition = props.type === 'x' ? offsetX : offsetY;
+      const {
+        scrollBarSize, scrollValue, scrollSize, containerSize, canvasHeight, canvasWidth,
+      } = scrollState;
+      const scrollElementSize = (props.type === 'x' ? canvasWidth : canvasHeight) / devicePixelRatio;
+      const thumbSize = scrollBarSize / devicePixelRatio;
+      const currentPositionPercent = currentPosition / (scrollElementSize - thumbSize);
+      const maxScrollValue = scrollSize - containerSize;
+      const newScrollValue = currentPositionPercent * (scrollSize - containerSize) - containerSize / 2;
+      const newValidScrollValue = Math.round(Math.max(0, Math.min(newScrollValue, maxScrollValue)));
+
+      if (scrollValue !== newValidScrollValue) {
+        lastMousePosition = props.type === 'x' ? screenX : screenY;
+        isWaitingForScrollValueUpdate = true;
+        props.onScrollValueChange(newValidScrollValue);
+      }
+    }
+  }
+
+  function handleOnMouseUp() {
+    lastMousePosition = null;
+  }
+
+  function handleOnMouseMove({ screenX, screenY }: MouseEvent) {
+    if (lastMousePosition !== null && !isWaitingForScrollValueUpdate) {
+      const currentPosition = props.type === 'x' ? screenX : screenY;
+
+      if (lastMousePosition === currentPosition) {
+        return;
+      }
+
+      const {
+        scrollBarSize, scrollValue, scrollSize, containerSize, canvasHeight, canvasWidth,
+      } = scrollState;
+      const scrollElementSize = (props.type === 'x' ? canvasWidth : canvasHeight) / devicePixelRatio;
+      const diff = currentPosition - lastMousePosition;
+      const thumbSize = scrollBarSize / devicePixelRatio;
+      const diffPercent = diff / (scrollElementSize - thumbSize);
+      const maxScrollValue = scrollSize - containerSize;
+      const newScrollValue = scrollValue + diffPercent * maxScrollValue;
+      const newValidScrollValue = Math.round(Math.max(0, Math.min(newScrollValue, maxScrollValue)));
+
+      if (scrollValue !== newValidScrollValue) {
+        lastMousePosition = currentPosition;
+        isWaitingForScrollValueUpdate = true;
+        props.onScrollValueChange(newValidScrollValue);
+      }
+    }
+  }
 
   function render() {
     if (!ctx || !scrollState) {
@@ -71,7 +137,9 @@ function initScrollBar(props: InitScrollBarProps) {
     const newTop = progress * ((type === 'x' ? canvasWidth : canvasHeight) - scrollBarSize);
 
     if (newTop !== scrollState.offset) {
+      scrollState.scrollValue = value;
       scrollState.offset = newTop;
+      isWaitingForScrollValueUpdate = false;
 
       render();
 
@@ -102,8 +170,18 @@ function initScrollBar(props: InitScrollBarProps) {
     return !!scrollState;
   }
 
+  function stop() {
+    props.element.removeEventListener('mousedown', handleOnMouseDown);
+    window.removeEventListener('mousemove', handleOnMouseMove);
+    window.removeEventListener('mouseup', handleOnMouseUp);
+  }
+
+  props.element.addEventListener('mousedown', handleOnMouseDown);
+  window.addEventListener('mousemove', handleOnMouseMove);
+  window.addEventListener('mouseup', handleOnMouseUp);
+
   return {
-    render, updateScrollValue, updateContainerSize, isVisible,
+    render, updateScrollValue, updateContainerSize, isVisible, stop,
   };
 }
 
@@ -124,6 +202,11 @@ export function startScrollBars(
     clientWidth: containerWidth,
   } = container;
   const isHTML = tagName === 'HTML';
+  const getHandleOnScrollValueChange = (type: ScrollType) => (newValue: number) => {
+    requestAnimationFrame(() => {
+      container[type === 'x' ? 'scrollLeft' : 'scrollTop'] = newValue;
+    });
+  };
   const scrollXInstance = initScrollBar({
     type: 'x',
     element: scrollbarX,
@@ -131,6 +214,7 @@ export function startScrollBars(
     scrollSize: scrollSizeX,
     scrollValue: scrollValueX,
     config,
+    onScrollValueChange: getHandleOnScrollValueChange('x'),
   });
   const scrollYInstance = initScrollBar({
     type: 'y',
@@ -139,6 +223,7 @@ export function startScrollBars(
     scrollSize: scrollSizeY,
     scrollValue: scrollValueY,
     config,
+    onScrollValueChange: getHandleOnScrollValueChange('y'),
   });
 
   let isUpdatingScroll = false;
@@ -150,8 +235,8 @@ export function startScrollBars(
     }
 
     const { scrollTop, scrollLeft } = container;
-    const isUpdatedX = !!scrollXInstance?.updateScrollValue(scrollLeft);
-    const isUpdatedY = !!scrollYInstance?.updateScrollValue(scrollTop);
+    const isUpdatedX = scrollXInstance.updateScrollValue(scrollLeft);
+    const isUpdatedY = scrollYInstance.updateScrollValue(scrollTop);
 
     isUpdatingScroll = isUpdatedX || isUpdatedY;
 
@@ -221,8 +306,8 @@ export function startScrollBars(
     resizeObserver.observe(container);
   }
 
-  scrollXInstance?.render();
-  scrollYInstance?.render();
+  scrollXInstance.render();
+  scrollYInstance.render();
 
   renderContainerClasses();
 
