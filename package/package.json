@@ -1,6 +1,6 @@
 {
   "name": "canvasbar-react",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "React component for CanvasBar",
   "files": [
     "build",
@@ -12,6 +12,14 @@
     "url": "https://github.com/monext/canvasbar.git",
     "directory": "packages/canvasbar-react"
   },
+  "keywords": [
+    "scroll",
+    "scroller",
+    "scrollbar",
+    "react",
+    "react-component",
+    "custom"
+  ],
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "module": "build/index.es.js",
