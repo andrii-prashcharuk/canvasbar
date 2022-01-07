@@ -1,7 +1,7 @@
 {
   "name": "canvasbar-react",
-  "version": "0.0.11",
-  "description": "React component for CanvasBar",
+  "version": "0.0.12",
+  "description": "React component for scrollbars customization (implemented using canvas API)",
   "files": [
     "build",
     "README.md"
@@ -18,7 +18,9 @@
     "scrollbar",
     "react",
     "react-component",
-    "custom"
+    "custom",
+    "canvas",
+    "typescript"
   ],
   "main": "build/index.js",
   "types": "build/index.d.ts",
