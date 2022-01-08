@@ -15,7 +15,7 @@ React component library for scrollbars customization (implemented using canvas A
 ### Sample usage
 
 ```js
-import { CanvasBar } from  'canvasbar-react';
+import { CanvasBar } from 'canvasbar-react';
 
 const YourComponent = () => (
   <CanvasBar>
