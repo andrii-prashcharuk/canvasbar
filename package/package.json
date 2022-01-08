@@ -1,6 +1,6 @@
 {
   "name": "canvasbar-react",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "React component for scrollbars customization (implemented using canvas API)",
   "files": [
     "build",
@@ -60,6 +60,7 @@
     "node-sass": "7.0.0",
     "prettier": "2.5.1",
     "rollup": "2.61.1",
+    "rollup-plugin-license": "2.6.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-typescript2": "0.31.1"
