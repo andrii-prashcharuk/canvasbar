@@ -15,7 +15,7 @@ React component library for scrollbars customization (implemented using canvas A
 ### Sample usage
 
 ```js
-import { CanvasBar } from  'canvasbar-react';
+import { CanvasBar } from 'canvasbar-react';
 
 const YourComponent = () => (
   <CanvasBar>
@@ -37,9 +37,11 @@ The `canvasbar-react` package exposes 3 items:
 
 ### CanvasBar component
 
-It has 2 custom properties:
+It has 4 custom properties:
 - `as` (`string`, default: `'div'`) – name of html element to use as a wrapper
-- `config` (`Partial<Config>`, default: `{}`) - [config object](#-config-object) object for scrollbars styling
+- `config` (`Partial<Config>`, default: `{}`) – [config object](#config-object) object for scrollbars styling
+- `wrapperRef` (`RefObject<Element>`) – ref for outer wrapper HTML element
+- `scrollableRef` (`RefObject<HTMLDivElement>`) – ref for inner scrollable HTML element
 
 The rest of properties are passed to wrapper element:
 
@@ -50,10 +52,20 @@ The rest of properties are passed to wrapper element:
 </CanvasBar>
 ```
 
+`CanvasBar` component is a generic pure function component. Generic has 1 optional argument:
+- `Element` (extends `HTMLElement`, default value is `HTMLElement`) – you can specify it depending on what `as` prop value you use, so element related properties can be validated properly by TypeScript:
+
+```tsx
+// in this case wrapper element will be <form>, onSubmit will be passed to it
+<CanvasBar<HTMLFormElement> as='form' onSubmit={yourHandler}>
+  // your content here
+</CanvasBar>
+```
+
 ### useBodyCanvasBar hook
 
 In has 1 argument:
-- `config` (`Partial<Config>`, default: `{}`) – [config object](#-config-object) for scrollbars styling
+- `config` (`Partial<Config>`, default: `{}`) – [config object](#config-object) for scrollbars styling
 
 ⚠️ It's recommended to use this hook in the top level component to make sure body scrollbars are always styled properly.
 
@@ -85,4 +97,8 @@ Fields:
 - `thumbColor` (`'string'`, default: `'rgba(0, 0, 0, .5)'`) – the color of draggable scrollbar area (thumb)
 - `thumbBorderRadius` (`number | 'auto'`, default: `'auto'`) – thumb's border radius in px. If `'auto'`, the actual value will be half of width for vertical scrollbar and half of height for horizontal scrollbar.
 - `thumbMinSize` (`number`, default `20`) – thumb's minimum size in px. To prevent thumb size from becoming too small when the scrollable content is too large.
-- `padding` (`number`, default `2`) – thumb's padding in px. To add padding between thumb and scrollbar edges. 
+- `padding` (`number`, default `2`) – thumb's padding in px. To add padding between thumb and scrollbar edges.
+
+### Changelog
+
+See changelog here: https://github.com/monext/canvasbar/releases
