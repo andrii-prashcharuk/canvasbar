@@ -55,7 +55,7 @@ The rest of properties are passed to wrapper element:
 `CanvasBar` component is a generic pure function component. Generic has 1 optional argument:
 - `Element` (extends `HTMLElement`, default value is `HTMLElement`) – you can specify it depending on what `as` prop value you use, so element related properties can be validated properly by TypeScript:
 
-```tsx
+```js
 // in this case wrapper element will be <form>, onSubmit will be passed to it
 <CanvasBar<HTMLFormElement> as='form' onSubmit={yourHandler}>
   // your content here
