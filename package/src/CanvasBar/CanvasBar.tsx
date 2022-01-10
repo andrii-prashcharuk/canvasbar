@@ -8,13 +8,16 @@ import { useCanvasBar } from '../hooks/useCanvasBar';
 
 interface Props<Element> extends HTMLAttributes<Element> {
   as?: string;
-  config?: Partial<Config>
+  config?: Partial<Config>,
+  wrapperRef?: RefObject<Element>,
+  scrollableRef?: RefObject<HTMLDivElement>,
 }
 
 export function CanvasBar<Element extends HTMLElement = HTMLElement>({
-  as = 'div', config, className, children, ...props
+  as = 'div', wrapperRef, scrollableRef, config, className, children, ...props
 }: Props<Element>): JSX.Element {
-  const containerRef = useRef<HTMLElement>(null);
+  const createdContainerRef = useRef<HTMLElement>(null);
+  const containerRef = scrollableRef ?? createdContainerRef;
   const scrollbarXRef = useRef<HTMLCanvasElement>(null);
   const scrollbarYRef = useRef<HTMLCanvasElement>(null);
 
@@ -25,6 +28,7 @@ export function CanvasBar<Element extends HTMLElement = HTMLElement>({
     {
       ...props,
       className: `canvasbar-wrapper ${className}`,
+      ref: wrapperRef,
     }, (
       <>
         <div ref={containerRef as RefObject<HTMLDivElement>} className="canvasbar-scrollable">{children}</div>
