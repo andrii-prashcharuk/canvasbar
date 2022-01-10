@@ -1,6 +1,6 @@
 {
   "name": "canvasbar-react",
-  "version": "0.0.13",
+  "version": "1.0.0-alpha.0",
   "description": "React component for scrollbars customization (implemented using canvas API)",
   "files": [
     "build",
@@ -34,7 +34,9 @@
     "updateExamplePackage": "rm -rf ../examples/node_modules/canvasbar-react/build && cp -R build ../examples/node_modules/canvasbar-react/build",
     "build:dev": "npm run build && npm run updateExamplePackage",
     "prepublishOnly": "npm run build",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "preversion": "npm run build",
+    "postversion": "git push && git push --tags"
   },
   "peerDependencies": {
     "@types/react": ">=16.8.0",
