@@ -69,6 +69,8 @@ In has 1 argument:
 
 ⚠️ It's recommended to use this hook in the top level component to make sure body scrollbars are always styled properly.
 
+⚠️ Unfortunately, it doesn't work on mobile iOS devices. It's not possible to customize or turn off root scrollbars in iOS devices
+
 ### CanvasBarConfigContext
 
 The value of this context is `Partial<Config>` object:
