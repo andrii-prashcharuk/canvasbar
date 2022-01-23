@@ -1,6 +1,6 @@
 {
   "name": "canvasbar-react",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "React component for scrollbars customization (implemented using canvas API)",
   "files": [
     "build",
@@ -27,7 +27,7 @@
   "module": "build/index.es.js",
   "bugs": "https://github.com/grsmto/simplebar/issues",
   "homepage": "https://pj2m4.csb.app",
-  "license": "GNU",
+  "license": "MIT",
   "scripts": {
     "eslint": "eslint --ext .ts,.tsx ./",
     "build": "npm run eslint && rollup -c",
