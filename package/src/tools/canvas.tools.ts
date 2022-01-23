@@ -40,7 +40,15 @@ export function renderThumb(ctx: CanvasRenderingContext2D, {
   type, offset, scrollBarSize, canvasHeight, canvasWidth,
 }: ScrollState, { thumbColor, thumbBorderRadius, padding }: Config) {
   const paddingValue = padding * devicePixelRatio;
+  const thumbOffset = Math.max(offset, 0) + paddingValue;
   let borderRadius = thumbBorderRadius;
+  const canvasSize = type === 'x' ? canvasWidth : canvasHeight;
+  const maxSize = canvasSize - offset - paddingValue * 2;
+  let size = Math.min(scrollBarSize - paddingValue * 2, maxSize);
+
+  if (offset < 0) {
+    size += offset;
+  }
 
   if (borderRadius === 'auto') {
     borderRadius = ((type === 'x' ? canvasHeight : canvasWidth) - paddingValue * 2) / 2;
@@ -53,9 +61,9 @@ export function renderThumb(ctx: CanvasRenderingContext2D, {
   if (type === 'x') {
     renderRoundRect(
       ctx,
-      offset + paddingValue,
+      thumbOffset,
       paddingValue,
-      scrollBarSize - paddingValue * 2,
+      size,
       canvasHeight - paddingValue * 2,
       borderRadius,
     );
@@ -63,9 +71,9 @@ export function renderThumb(ctx: CanvasRenderingContext2D, {
     renderRoundRect(
       ctx,
       paddingValue,
-      offset + paddingValue,
+      thumbOffset,
       canvasWidth - paddingValue * 2,
-      scrollBarSize - paddingValue * 2,
+      size,
       borderRadius,
     );
   }
