@@ -302,6 +302,7 @@ export function startScrollBars(
 
   if (isHTML) {
     window.addEventListener('resize', handleOnResize);
+    resizeObserver.observe(document.body);
   } else {
     resizeObserver.observe(container);
   }
@@ -316,6 +317,7 @@ export function startScrollBars(
 
     if (isHTML) {
       window.removeEventListener('resize', handleOnResize);
+      resizeObserver.unobserve(document.body);
     } else {
       resizeObserver.unobserve(container);
     }
