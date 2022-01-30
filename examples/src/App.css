@@ -1,8 +1,14 @@
-.app {
+.grid-page {
   display: grid;
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
   grid-gap: 10px;
+  padding: 10px;
+}
+
+.overflow-page {
+  min-width: 150vw;
+  min-height: 300vh;
   padding: 10px;
 }
 
@@ -17,4 +23,39 @@
 .my-scrollable-container img {
   width: 600px;
   height: 600px;
+}
+
+.my-scrollable-table,
+.my-scrollable-table-sticky {
+  border: 1px solid gray;
+  width: 800px;
+  height: 500px;
+  margin: auto;
+  overflow: auto;
+}
+
+.my-scrollable-table th,
+.my-scrollable-table td,
+.my-scrollable-table-sticky th,
+.my-scrollable-table-sticky td {
+  white-space: nowrap;
+}
+
+.my-scrollable-table-sticky table {
+  position: relative;
+}
+
+.my-scrollable-table-sticky thead {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background: white;
+  z-index: 1;
+}
+
+.my-scrollable-table-sticky tbody td:first-child {
+  position: sticky;
+  left: 0;
+  background: white;
+  font-weight: bold;
 }
