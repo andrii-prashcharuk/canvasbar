@@ -33,6 +33,7 @@
   position: absolute;
   transition: background-color 200ms;
   visibility: hidden;
+  z-index: 1;
 
   &:hover {
     background: rgba(255, 255, 255, .9);
